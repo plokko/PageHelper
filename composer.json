@@ -1,0 +1,19 @@
+{
+  "name": "plokko/pagehelper",
+  "description": "Helper for managing metatags,css and javascript",
+  "keywords":["laravel","page","helper","meta","metatags","css","style","javascript","js"],
+  "require": {
+      "php": ">=5.4"
+  },
+  "require-dev":{},
+
+  "authors":[
+    {"name":"Francesco Pellerone"}
+  ],
+
+  "autoload": {
+    "psr-4": {
+      "plokko\\PageHelper\\": "src"
+    }
+  }
+}
