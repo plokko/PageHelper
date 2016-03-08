@@ -5,6 +5,7 @@ return [
     'description'=>'My default page description',
     'lang'=>'en',
     'charset'=>'utf-8',
+    //'icon'=>'favicon.ico', /*or as array: ['icon.png','icon.ico',..]*/
     'meta'=>[
         'tags'=>[
             //'tag-name'=>'value', /*OR*/ 'tag-name1'=>['content'=>'value','attr'=>'attr-value'],
@@ -17,9 +18,9 @@ return [
         ],
     ],
     'script'=>[
-
+        'required'=>['app.js'],
     ],
     'style'=>[
-
+        'required'=>['app.css'],
     ],
 ];
