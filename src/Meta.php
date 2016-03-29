@@ -58,6 +58,7 @@ class Meta implements \ArrayAccess
             ]+$opt
         );
     }
+
     function add($name,$value=null,array $opt=[])
     {
         if($name=='charset')

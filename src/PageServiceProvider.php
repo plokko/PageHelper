@@ -9,7 +9,7 @@ class PageServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__.'/views/', 'Page');
+        $this->loadViewsFrom(__DIR__.'/views/', 'pagehelper');
         $this->publishes([ __DIR__.'/config/example.php' => config_path('PageHelper.php')]);
     }
 

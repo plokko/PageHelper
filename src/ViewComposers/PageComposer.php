@@ -16,7 +16,6 @@ class PageComposer
     {
         $page=App::make('Page');
         /** @var $page Page */
-
         $view->with('page',$page);
         $factory=$view->getFactory();
 

@@ -57,10 +57,14 @@ class Page
         {
             case 'title':
                 return $this->title;
-            case 'keywords':
+            case 'charset':
             case 'description':
                 $meta=$this->meta->{$k};
                 return $meta?$meta->content:null;
+
+            case 'keywords':
+                $meta=$this->meta->{$k};
+                return $meta?(is_array($meta->content)?implode(',',$meta->content):$meta->content):null;
 
             case 'lang':return $this->lang();
 
