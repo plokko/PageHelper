@@ -46,4 +46,9 @@ class MetaTag
         return $this->render();
     }
 
+    function __get($k)
+    {
+        return isset($this->attr[$k])?$this->attr[$k]:null;
+    }
+
 }

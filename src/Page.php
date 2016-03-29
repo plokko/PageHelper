@@ -2,14 +2,24 @@
 namespace plokko\PageHelper;
 
 
+use Symfony\Component\DomCrawler\Link;
+
 class Page
 {
     protected
+        $sections=[
+            'htmlTagAttributes'=>'html.attributes',
+            'bodyTagAttributes'=>'html.attributes',
+            'head'=>'page.head',
+            'footerScripts'=>null,
+        ],
+
         $title,
         $lang=null,
 
         $htmlTags=['html'=>[],'body'=>[]],
-        $links=[],
+        /**@var \plokko\PageHelper\Links **/
+        $links,
 
         /**@var \plokko\PageHelper\Meta **/
         $meta,
@@ -23,11 +33,56 @@ class Page
         $this->meta   = \App::make('Meta');
         $this->script = \App::make('Script');
         $this->style  = \App::make('Style');
+        $this->links  =  new Links();
 
-        foreach(['title','description','keywords','lang','icon'] AS $k)
+        foreach(['title','description','keywords','icon',] AS $k)
         {
             if(isset($cfg[$k]))
                 $this->{$k}($cfg[$k]);
+        }
+
+        if(isset($cfg['sections']))
+        {
+            foreach($cfg['sections'] AS $k=>$v){
+                if(isset($this->sections[$k]))
+                    $this->sections[$k]=$v;
+            }
+        }
+    }
+
+
+    function __get($k)
+    {
+        switch($k)
+        {
+            case 'title':
+                return $this->title;
+            case 'keywords':
+            case 'description':
+                $meta=$this->meta->{$k};
+                return $meta?$meta->content:null;
+
+            case 'lang':return $this->lang();
+
+            default:
+                return null;
+        }
+    }
+    function __set($k,$v)
+    {
+        switch($k)
+        {
+            case 'title':
+                $this->title($v);
+            case 'keywords':
+            case 'description':
+                $this->meta->{$k}=$v;
+
+
+            case 'lang':return $this->lang();
+
+            default:
+                return null;
         }
     }
 
@@ -92,18 +147,42 @@ class Page
         return $this->style;
     }
 
+    /**
+     * @return Links
+     */
+    function links()
+    {
+        return $this->links;
+    }
 
 
-    function getHtmlTags()
+    function getHtmlTagAttributes()
     {
         $tags=$this->htmlTags['html'];
         $tags['lang']=$this->lang();
         return $tags;
     }
 
-    function getBodyTags()
+    function getBodyTagAttributes()
     {
         return $this->htmlTags['body'];
+    }
+
+    function bodyTagAttributes()
+    {
+        $txt='';
+        foreach($this->htmlTags['body'] AS $k=>$v)
+            $txt.=$k.'="'.htmlspecialchars($v).'" ';
+        return $txt;
+    }
+    function htmlTagAttributes()
+    {
+        $txt='';
+        $attr=$this->htmlTags['html'];
+        $attr['lang']=$this->lang();//automaticall adds lang attribute
+        foreach($attr AS $k=>$v)
+            $txt.=$k.'="'.htmlspecialchars($v).'" ';
+        return $txt;
     }
 
     /**
@@ -111,9 +190,9 @@ class Page
      * @param string $key
      * @param string|null $value
      */
-    function setHtmlTag($key, $value)
+    function setHtmlTagAttribute($key, $value)
     {
-        $this->setTag('html',$key,$value);
+        $this->setTagAttribute('html',$key,$value);
     }
 
     /**
@@ -121,12 +200,12 @@ class Page
      * @param string $key
      * @param string|null $value
      */
-    function setBodyTag($key,$value)
+    function setBodyTagAttribute($key,$value)
     {
-        $this->setTag('body',$key,$value);
+        $this->setTagAttribute('body',$key,$value);
     }
 
-    private function setTag($section, $key, $value)
+    private function setTagAttribute($section, $key, $value)
     {
         switch($section){
             case 'html':
@@ -139,59 +218,33 @@ class Page
         }
     }
 
-    function renderHead()
+    /**
+     * @return array
+     */
+    public function sections($sections=null)
     {
-
-        ///- Charset & title -///
-        echo "\t",$this->meta->charset->render(),"\n";
-        echo "\t"?><title><?=htmlspecialchars($this->title)?></title><?echo "\n";
-
-        ///- Meta tags -///
-        unset($this->meta['charset']);//remove charset
-        echo $this->meta->render();
-
-        $this->renderLinks();
-
-        ///- Style -///
-        echo $this->style->render();
-
-        ///- Js -///
-        echo $this->script->render(false);
-
-
-
-    }
-    function renderFooter()
-    {
-        echo $this->script->render(true);
-    }
-
-    protected function renderLinks()
-    {
-        foreach($this->links AS $name=>$link)
+        if($sections)
         {
-            foreach($link AS $tags)
+            foreach($this->sections AS $k=>&$v)
             {
-                if(!is_array($tags))
-                    $tags=['href'=>$tags];
-
-                echo "\t";?><link rel="<?=$name?>" <?foreach($tags AS $k=>$v){echo $k,'="',htmlspecialchars($v),'" ';}?>/><?echo "\n";
+                if(isset($sections[$k]))
+                    $v=$sections[$k];
             }
         }
+        return $this->sections;
     }
 
-
-    function link($rel,$href)
+    public function section($name,$value=null)
     {
-        if($href==null){
-            unset($this->links[$rel]);
-        }else{
-            $links=is_array($href)?
-                (isset($href['href'])?[$href]:$href)
-                :[['href'=>$href]];
-            $this->links[$rel]=$links;
+        if($value)
+        {
+            if(isset($this->sections[$name]))
+                $this->sections[$name]=$value;
         }
+        return isset($this->sections[$name])?$this->sections[$name]:null;
     }
+
+
 
     function robots($robots=['index','follow'])
     {
@@ -212,17 +265,17 @@ class Page
                 $alt[]=['href'=>$url,'hreflang'=>$lang];
         }
 
-        $this->link('alternate',$alt);
+        $this->links->set('alternate',$alt);
     }
 
     function prev($url)
     {
-        $this->link('prev',$url);
+        $this->links->set('prev',$url);
     }
 
     function next($url)
     {
-        $this->link('next',$url);
+        $this->links->set('next',$url);
     }
 
     /**
@@ -231,7 +284,7 @@ class Page
      */
     function icon($icon)
     {
-        $this->link('icon',$icon);
+        $this->links->set('icon',$icon);
     }
 
 

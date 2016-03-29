@@ -17,6 +17,11 @@ class PageServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/config/default.php','PageHelper');
 
+
+        //---{ View composer }---//
+        view()->composer('*',ViewComposers\PageComposer::class);
+
+        //---{ Register services }---//
         $this->app->singleton('Page',function ($app){
             return new Page(config('PageHelper'));
         });

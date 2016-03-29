@@ -5,19 +5,16 @@ namespace plokko\PageHelper;
 class Meta implements \ArrayAccess
 {
     private
+        $charset,
         $metatags=[];
 
     function __construct($cfg=[])
     {
-        $this->charset();
-        if(isset($cfg['metatags']['tags']))
+        $this->charset();//default charset
+        if(isset($cfg['meta']['tags']))
         {
-            foreach($cfg['metatags']['tags'] AS $k=>$v){
-                if($k=='charset'){
-                    $this->charset($v);
-                    continue;
-                }
-
+            foreach($cfg['meta']['tags'] AS $k=>$v)
+            {
                 $opt=[];
                 if(is_array($v))
                 {
@@ -27,9 +24,9 @@ class Meta implements \ArrayAccess
                 $this->add($k,$v,$opt);
             }
         }
-        if(isset($cfg['metatags']['http-equiv']))
+        if(isset($cfg['meta']['http-equiv']))
         {
-            foreach($cfg['metatags']['http-equiv'] AS $k=>$v){
+            foreach($cfg['meta']['http-equiv'] AS $k=>$v){
                 $opt=[];
                 if(is_array($v))
                 {
@@ -39,9 +36,9 @@ class Meta implements \ArrayAccess
                 $this->httpEquiv($k,$v,$opt);
             }
         }
-        if(isset($cfg['metatags']['og']))
+        if(isset($cfg['meta']['og']))
         {
-            foreach($cfg['metatags']['og'] AS $k=>$v){
+            foreach($cfg['meta']['og'] AS $k=>$v){
                 $this->og($k,$v);
             }
         }
@@ -55,7 +52,7 @@ class Meta implements \ArrayAccess
     function charset($charset='utf-8',array $opt=[])
     {
 
-        $this->metatags['charset']=new MetaTag(
+        $this->charset=new MetaTag(
             [
                 'charset'=>$charset,
             ]+$opt
@@ -102,7 +99,13 @@ class Meta implements \ArrayAccess
 
     function __get($k)
     {
+        if($k=='charset')return $this->charset;
         return isset($this->metatags[$k])?$this->metatags[$k]:null;
+    }
+
+    function __set($k,$v)
+    {
+        $this->add($k,$v);
     }
 
     public function offsetExists($offset)
@@ -116,7 +119,7 @@ class Meta implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->metatags[$offset];
+        return $this->__get($offset);
     }
 
     public function offsetSet($k, $v)

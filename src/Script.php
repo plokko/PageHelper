@@ -51,5 +51,9 @@ class Script
         return $txt;
     }
 
+    function __toString()
+    {
+        return $this->render();
+    }
 
 }

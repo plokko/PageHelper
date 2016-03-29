@@ -3,7 +3,16 @@
 return [
     'title'=>'My default page title',
     'description'=>'My default page description',
-    'lang'=>'en',
+    //Set sections//
+    'sections'=>[
+        'htmlTagAttributes'=>'html.attributes',
+        'bodyTagAttributes'=>'html.attributes',
+        'head'=>'page.head',
+        'footerScripts'=>null,
+    ],
+
+    //'icon'=>'icon_url.png',
+
     'charset'=>'utf-8',
     //'icon'=>'favicon.ico', /*or as array: ['icon.png','icon.ico',..]*/
     'meta'=>[
