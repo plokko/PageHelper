@@ -25,14 +25,20 @@ class PageComposer
         if($page->section('footerScripts'))
         {
             $deferredScripts=false;
-            $factory->startSection($page->section('footerScripts'),new ViewBlock(function() use ($page){$page->script()->render(true);}));
+            $factory->startSection($page->section('footerScripts'),
+                new ViewBlock(function() use ($page){
+                    return $page->script()->render(true);
+                })
+            );
         }
         
         $factory->startSection($page->section('htmlTagAttributes'),$page->htmlTagAttributes());
         $factory->startSection($page->section('bodyTagAttributes'),$page->bodyTagAttributes());
 
         //--Page head--//
-        $factory->startSection($page->section('head'),new ViewBlock(function() use ($page,$deferredScripts){
+        $factory->startSection($page->section('head'),
+            new ViewBlock(function() use ($page,$deferredScripts)
+            {
                 return
                     "\t".$page->meta()->charset->render()."\n".
                     "\t<title>".htmlspecialchars($page->title)."</title>\n".
