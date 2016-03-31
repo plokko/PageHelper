@@ -11,9 +11,9 @@ class Meta implements \ArrayAccess
     function __construct($cfg=[])
     {
         $this->charset();//default charset
-        if(isset($cfg['meta']['tags']))
+        if(isset($cfg['tags']))
         {
-            foreach($cfg['meta']['tags'] AS $k=>$v)
+            foreach($cfg['tags'] AS $k=>$v)
             {
                 $opt=[];
                 if(is_array($v))
@@ -24,9 +24,9 @@ class Meta implements \ArrayAccess
                 $this->add($k,$v,$opt);
             }
         }
-        if(isset($cfg['meta']['http-equiv']))
+        if(isset($cfg['http-equiv']))
         {
-            foreach($cfg['meta']['http-equiv'] AS $k=>$v){
+            foreach($cfg['http-equiv'] AS $k=>$v){
                 $opt=[];
                 if(is_array($v))
                 {
@@ -36,9 +36,9 @@ class Meta implements \ArrayAccess
                 $this->httpEquiv($k,$v,$opt);
             }
         }
-        if(isset($cfg['meta']['og']))
+        if(isset($cfg['og']))
         {
-            foreach($cfg['meta']['og'] AS $k=>$v){
+            foreach($cfg['og'] AS $k=>$v){
                 $this->og($k,$v);
             }
         }
