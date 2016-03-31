@@ -8,6 +8,17 @@ class Script
 
     function __construct(array $cfg=[])
     {
+        if(isset($cfg['required']))
+        {
+            foreach($cfg['required'] AS $script=>$opt)
+            {
+                if(is_array($opt)){
+                    $this->add($script,$opt);
+                }elseif(is_string($opt)){
+                    $this->add($opt);
+                }
+            }
+        }
     }
 
     function add($script,$opt=[])

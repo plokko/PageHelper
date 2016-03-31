@@ -9,11 +9,16 @@ class Style
 
     function __construct(array $cfg=[])
     {
-        if(isset($cfg['style']['required']))
+
+        if(isset($cfg['required']))
         {
-            foreach($cfg['style']['required'] AS $name=>$opt)
+            foreach($cfg['required'] AS $name=>$opt)
             {
-                $this->add($name,isset($opt['media'])?$opt['media']:'all');
+                if(is_array($opt)){
+                    $this->add($name,isset($opt['media'])?$opt['media']:'all');
+                }elseif(is_string($opt)){
+                    $this->add($opt);
+                }
             }
         }
     }

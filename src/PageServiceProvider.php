@@ -27,16 +27,16 @@ class PageServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('Meta',function ($app){
-            return new Meta(config('PageHelper'));
+            return new Meta(config('PageHelper.meta'));
 
              });
         $this->app->singleton('Script',function ($app){
-            return new Script(config('PageHelper'));
+            return new Script(config('PageHelper.script'));
         });
 
 
         $this->app->singleton('Style',function ($app){
-            return new Style(config('PageHelper'));
+            return new Style(config('PageHelper.style'));
         });
     }
 

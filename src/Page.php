@@ -30,9 +30,9 @@ class Page
 
     function __construct(array $cfg=[])
     {
-        $this->meta   = \App::make('Meta');
-        $this->script = \App::make('Script');
-        $this->style  = \App::make('Style');
+        $this->meta   = app('Meta');
+        $this->script = app('Script');
+        $this->style  = app('Style');
         $this->links  =  new Links();
 
         foreach(['title','description','keywords','icon',] AS $k)
